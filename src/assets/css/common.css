@@ -1,0 +1,24 @@
+.tbl-basic {
+  border-spacing: 0;
+	border-collapse: collapse;
+}
+
+.tbl-basic.fixed {
+  table-layout: fixed;
+}
+
+.tbl-basic th,td {
+  border: 1px solid black;
+}
+
+.tbl-basic th {
+  background-color: #f4f8f9;
+}
+
+.tbl-basic tr > tr:not(:first-child) > th,td {
+  border-top: 0;
+}
+
+.tbl-basic tr:hover {
+  background-color: #f5f7fa;
+}

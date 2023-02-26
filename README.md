@@ -1,5 +1,7 @@
 # vue-draggable-tree-table
 
+| Drag and drop을 지원하는 트리 형태의 데이터 테이블
+
 ## Project setup
 ```
 yarn install
