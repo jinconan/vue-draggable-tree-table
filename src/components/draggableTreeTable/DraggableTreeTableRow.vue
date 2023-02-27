@@ -1,6 +1,6 @@
 <template>
   <tr v-show="isShow" :class="rowClass" :draggable="draggable"
-    @dragstart="onDragstart"
+    @dragstart.capture="onDragstart"
     @drag="onDrag"
     @dragend="onDragend"
   >
@@ -14,7 +14,7 @@
           textAlign: 'left',
         }"
         @dragenter="onDragenter"
-        @dragover="onDragover"
+        @dragover.prevent="onDragover"
         @drop.prevent="onDrop"
         @dragleave.prevent="onDragleave"
       >
@@ -96,16 +96,15 @@ export default {
   },
   methods: {
     onDragstart(event) {
-      console.log('onDragstart', event);
+      const { target, currentTarget } = event;
       this.dragging = true;
+      console.log(event);
       this.tableComponent.$emit('row:dragStart', { fromIndex: this.index });
     },
     onDrag(event) {
-      console.log('onDrag', event);
       this.tableComponent.$emit('row:drag');
     },
     onDragend(event) {
-      console.log('onDragend', event);
       this.dragging = false;
       this.tableComponent.$emit('row:dragEnd');
     },
@@ -118,8 +117,6 @@ export default {
       } else {
         this.hoverRow = true;
       }
-
-      console.log('onDragenter', event);
       
       this.tableComponent.$emit('row:dragEnter', { toIndex: this.index });
 
@@ -137,9 +134,13 @@ export default {
     },
     onDrop(event) {
       console.log('onDrop', event);
+      const asChildren = this.hoverCell;
       this.hoverCell = false;
       this.hoverRow = false;
-      this.tableComponent.$emit('row:drop');
+
+      
+
+      this.tableComponent.$emit('row:drop', { asChildren });
     },
     onDragleave(event) {
       const { toElement } = event;
@@ -150,7 +151,6 @@ export default {
         this.hoverRow = false;
       }
 
-      console.log('onDragleave', event);
       this.tableComponent.$emit('row:dragLeave');
     },
 

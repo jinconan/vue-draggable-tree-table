@@ -22,6 +22,7 @@
         :rowKey="rowKey"
         :columns="columns"
         :list="rows"
+        :childrenInfoList="childrenInfoList"
         :emptyTextColspan="emptyTextColspan"
         :emptyText="emptyText"
         :isDraggable="isDraggable"
@@ -93,6 +94,27 @@ export default {
 
       return this.$slots.colgroup[0].children.length;
     },
+
+    childrenInfoList() {
+      const rowPathArr = this.rows.map((row) => this.getRowPath(row));
+
+      const arr = rowPathArr.map((rowPath, rowPathIndex) => {
+        const result = [];
+
+        rowPathArr.forEach((targetRowPath, targetIndex) => {
+          if (rowPathIndex !== targetIndex && this.validateParent(rowPath, targetRowPath)) {
+            result.push({
+              index: targetIndex,
+              children: this.rows[targetIndex],
+            });
+          }
+        });
+
+        return result;
+      })
+
+      return arr;
+    },
   },
   mounted() {
     this.$on('row:dragStart', this.handleStart);
@@ -104,6 +126,16 @@ export default {
     this.$on('row:dragEnd', this.handleEnd);
   },
   methods: {
+    /**
+     * 두 rowPath를 비교하여 부모-자식 관계인지 체크
+     * @param {Array} parentRowPath 
+     * @param {Array} rowPath 
+     * @param {Boolean} isAdjcent 인접여부
+     */
+    validateParent(parentRowPath, rowPath, isAdjacent = true) {
+      const lengthCheck = isAdjacent ? parentRowPath.length + 1 === rowPath.length : parentRowPath.length < rowPath.length;
+      return lengthCheck && parentRowPath.every((node, nodeIndex) => node === rowPath[nodeIndex]);
+    },
     handleStart({ fromIndex }) {
       console.log(`handleStart : from : ${fromIndex}`);
       this.fromIndex = fromIndex;
@@ -112,8 +144,23 @@ export default {
       console.log(`handleOver : from : ${this.fromIndex}, to : ${toIndex}`);
       this.toIndex = toIndex;
     },
-    handleDrop() {
-      this.$emit('rowDrop', { fromIndex: this.fromIndex, toIndex: this.toIndex});
+    handleDrop({ asChildren }) {
+      console.log(`handleDrop ${this.fromIndex} -> ${this.toIndex}, asChildren: ${asChildren}`);
+
+      if (this.fromIndex === this.toIndex) {
+        return;
+      }
+
+      const [parentRowPath, rowPath] = [
+        this.getRowPath(this.rows[this.fromIndex]),
+        this.getRowPath(this.rows[this.toIndex]),
+      ];
+
+      if (this.validateParent(parentRowPath, rowPath, false)) {
+        return;
+      }
+
+      this.$emit('rowDrop', { fromIndex: this.fromIndex, toIndex: this.toIndex, asChildren});
     },
     handleEnd() {
       this.$emit('rowDragEnd', { fromIndex: this.fromIndex, toIndex: this.toIndex});

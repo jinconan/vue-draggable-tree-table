@@ -44,6 +44,7 @@ export default {
   
     columns: Array,
     list: Array,
+    childrenInfoList: Array,
     emptyTextColspan: Number,
     emptyText: String,
     rowKey: String,
@@ -73,31 +74,6 @@ export default {
     },
   },
   computed: {
-    // 각 행 별로 멤버 리스트
-    childrenInfoList() {
-      const rowPathArr = this.list.map((row) => this.getRowPath(row));
-
-      const isParent = (parentRowPath, rowPath) => 
-        parentRowPath.length + 1 === rowPath.length
-        && parentRowPath.every((node, nodeIndex) => node === rowPath[nodeIndex]);
-      
-      const arr = rowPathArr.map((rowPath, rowPathIndex) => {
-        const result = [];
-
-        rowPathArr.forEach((targetRowPath, targetIndex) => {
-          if (rowPathIndex !== targetIndex && isParent(rowPath, targetRowPath)) {
-            result.push({
-              index: targetIndex,
-              children: this.list[targetIndex],
-            });
-          }
-        });
-
-        return result;
-      })
-
-      return arr;
-    },
     dragAreaClass() {
       return {
         dragArea: true,

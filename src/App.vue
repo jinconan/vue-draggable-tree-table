@@ -7,7 +7,7 @@
       rowKey="groupName"
       :getRowPath="getRowPath"
       :isDraggable="isDraggable"
-      @rowDragEnd="handleRowDrop"
+      @rowDrop="handleRowDrop"
     >
     </DraggableTreeTableVue>
   </div>
@@ -96,7 +96,7 @@ export default {
       return this.getRowPath(data).length > 1;
     },
     handleRowDrop({ fromIndex, toIndex }) {
-      console.log(`${fromIndex} -> ${toIndex}`);
+      this.$alert((`${fromIndex} -> ${toIndex}`));
     }
   }
 }
