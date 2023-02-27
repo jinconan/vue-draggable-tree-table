@@ -78,6 +78,8 @@ export default {
   },
   data() {
     return {
+      fromIndex: -1,
+      toIndex: -1,
     };
   },
   computed: {
@@ -93,19 +95,32 @@ export default {
     },
   },
   mounted() {
-    this.$on('rowDragStart', this.handleStart);
-    // this.$on('rowDrag', this.handleStart);
-    // this.$on('rowDragEnter', this.handleStart);
-    // this.$on('rowDragOver', this.handleStart);
-    // this.$on('rowDrop', this.handleStart);
-    // this.$on('rowDragLeave', this.handleStart);
-    this.$on('rowDragEnd', this.handleEnd);
+    this.$on('row:dragStart', this.handleStart);
+    // this.$on('row:drag', this.handleStart);
+    // this.$on('row:dragEnter', this.handleStart);
+    this.$on('row:dragOver', this.handleOver);
+    this.$on('row:drop', this.handleDrop);
+    // this.$on('row:dragLeave', this.handleStart);
+    this.$on('row:dragEnd', this.handleEnd);
   },
   methods: {
-    handleStart() {
+    handleStart({ fromIndex }) {
+      console.log(`handleStart : from : ${fromIndex}`);
+      this.fromIndex = fromIndex;
+    },
+    handleOver({ toIndex }) {
+      console.log(`handleOver : from : ${this.fromIndex}, to : ${toIndex}`);
+      this.toIndex = toIndex;
+    },
+    handleDrop() {
+      this.$emit('rowDrop', { fromIndex: this.fromIndex, toIndex: this.toIndex});
     },
     handleEnd() {
+      this.$emit('rowDragEnd', { fromIndex: this.fromIndex, toIndex: this.toIndex});
+      this.fromIndex = -1;
+      this.toIndex = -1;
     },
+    
   },
 };
 </script>

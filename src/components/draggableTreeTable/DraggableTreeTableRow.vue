@@ -13,7 +13,7 @@
             colIndex === 0 ? depth * 16 + 10 + 'px' : undefined,
           textAlign: 'left',
         }"
-        @dragenter.prevent="onDragenter"
+        @dragenter="onDragenter"
         @dragover="onDragover"
         @drop.prevent="onDrop"
         @dragleave.prevent="onDragleave"
@@ -98,63 +98,60 @@ export default {
     onDragstart(event) {
       console.log('onDragstart', event);
       this.dragging = true;
-      this.tableComponent.$emit('rowDragStart', { fromIndex: this.index });
+      this.tableComponent.$emit('row:dragStart', { fromIndex: this.index });
     },
-    onDrag() {
-      this.tableComponent.$emit('rowDrag');
+    onDrag(event) {
+      console.log('onDrag', event);
+      this.tableComponent.$emit('row:drag');
     },
     onDragend(event) {
       console.log('onDragend', event);
       this.dragging = false;
-      this.tableComponent.$emit('rowDragEnd');
+      this.tableComponent.$emit('row:dragEnd');
     },
-
 
     onDragenter(event) {
       const { toElement } = event;
-      if (toElement.classList.contains('cellContainer')) {
+
+      if (toElement.classList.contains('cellContainer') || toElement.classList.contains('handle')) {
         this.hoverCell = true;
       } else {
         this.hoverRow = true;
       }
-
 
       console.log('onDragenter', event);
       
-      this.tableComponent.$emit('rowDragEnter', { toIndex: this.index });
+      this.tableComponent.$emit('row:dragEnter', { toIndex: this.index });
+
     },
     onDragover(event) {
-      const { srcElement, toElement } = event;
+      const { toElement } = event;
 
-      if (srcElement.closest('tr') === toElement.closest('tr')) {
-        event.preventDefault();
-        return;
-      }
-
-      if (toElement.classList.contains('cellContainer')) {
+      if (toElement.classList.contains('cellContainer') || toElement.classList.contains('handle')) {
         this.hoverCell = true;
       } else {
         this.hoverRow = true;
       }
 
-      this.tableComponent.$emit('rowDragOver');
+      this.tableComponent.$emit('row:dragOver', { toIndex: this.index });
     },
     onDrop(event) {
-      console.log(event);
-
-      this.tableComponent.$emit('rowDrop');
+      console.log('onDrop', event);
+      this.hoverCell = false;
+      this.hoverRow = false;
+      this.tableComponent.$emit('row:drop');
     },
     onDragleave(event) {
       const { toElement } = event;
 
-      if (toElement.classList.contains('cellContainer')) {
+      if (toElement.classList.contains('cellContainer') || toElement.classList.contains('handle')) {
         this.hoverCell = false;
       } else {
         this.hoverRow = false;
       }
 
       console.log('onDragleave', event);
-      this.tableComponent.$emit('rowDragLeave');
+      this.tableComponent.$emit('row:dragLeave');
     },
 
   }
