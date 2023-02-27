@@ -64,7 +64,8 @@ export default {
   data() {
     return {
       dragging: false,
-      hoverRow: false,
+      hoverRowUpper: false,
+      hoverRowLower: false,
       hoverCell: false,
     };
   },
@@ -80,7 +81,8 @@ export default {
       return {
         draggableRow: true,
         dragging: this.dragging,
-        activeDropRow: this.hoverRow,
+        activeDropRowUpper: this.hoverRowUpper,
+        activeDropRowLower: this.hoverRowLower,
         activeDropCell: this.hoverCell,
       }
     },
@@ -109,35 +111,47 @@ export default {
       this.tableComponent.$emit('row:dragEnd');
     },
 
-    onDragenter(event) {
-      const { toElement } = event;
-
+    getToIndex(event) {
+      const { toElement, offsetY } = event;
+      let toIndex;
       if (toElement.classList.contains('cellContainer') || toElement.classList.contains('handle')) {
         this.hoverCell = true;
+        toIndex = this.index;
       } else {
-        this.hoverRow = true;
+
+        if (offsetY < toElement.clientHeight / 2) {
+          this.hoverRowUpper = true;
+          this.hoverRowLower = false;
+          toIndex = this.index;
+        } else {
+          this.hoverRowLower = true;
+          this.hoverRowUpper = false;
+          
+          if (this.tableComponent.fromIndex !== this.index) {
+            toIndex = this.index + 1;
+          } else {
+            toIndex = this.index;
+          }
+        }
+
       }
-      
-      this.tableComponent.$emit('row:dragEnter', { toIndex: this.index });
+
+      return toIndex;
+    },
+
+    onDragenter(event) {
+      this.tableComponent.$emit('row:dragEnter', { toIndex: this.getToIndex(event) });
 
     },
     onDragover(event) {
-      const { toElement } = event;
-
-      if (toElement.classList.contains('cellContainer') || toElement.classList.contains('handle')) {
-        this.hoverCell = true;
-      } else {
-        this.hoverRow = true;
-      }
-
-      this.tableComponent.$emit('row:dragOver', { toIndex: this.index });
+      this.tableComponent.$emit('row:dragOver', { toIndex: this.getToIndex(event) });
     },
     onDrop(event) {
       console.log('onDrop', event);
       const asChildren = this.hoverCell;
       this.hoverCell = false;
-      this.hoverRow = false;
-
+      this.hoverRowUpper = false;
+      this.hoverRowLower = false;
       
 
       this.tableComponent.$emit('row:drop', { asChildren });
@@ -148,7 +162,8 @@ export default {
       if (toElement.classList.contains('cellContainer') || toElement.classList.contains('handle')) {
         this.hoverCell = false;
       } else {
-        this.hoverRow = false;
+        this.hoverRowUpper = false;
+        this.hoverRowLower = false;
       }
 
       this.tableComponent.$emit('row:dragLeave');
@@ -175,7 +190,11 @@ export default {
   /* background-color: #409eff; */
 }
 
-.draggableRow.activeDropRow {
+.draggableRow.activeDropRowUpper {
+  border-top: 5px solid #409eff;
+}
+
+.draggableRow.activeDropRowLower {
   border-bottom: 5px solid #409eff;
 }
 
