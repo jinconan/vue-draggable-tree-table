@@ -54,12 +54,20 @@ export default {
         return [];
       },
     },
-    emptyText: String,
+    emptyText: {
+      type: String,
+      default: '데이터가 없습니다',
+    },
     rowKey: {
       type: String,
       default: 'id',
     },
-    outerStyle: Object,
+    outerStyle: {
+      type: Object,
+      default() {
+        return {};
+      },
+    },
     isDraggable: {
       type: Function,
       default() {

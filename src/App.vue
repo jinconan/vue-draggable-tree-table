@@ -3,7 +3,6 @@
     <DraggableTreeTableVue
       :columns="tableColumns"
       :rows="flattenData"
-      emptyText="데이터가 없습니다"
       rowKey="groupName"
       :getRowPath="getRowPath"
       :isDraggable="isDraggable"
@@ -21,65 +20,32 @@ export default {
   data() {
     return {
       tableColumns: [
-        { prop: 'groupName', label: '그룹명', width: 200 },
-        { prop: 'groupLevel', label: '그룹레벨', width: 100 },
+        { prop: 'groupName', label: '지역', width: 200 },
       ],
       flattenData: [
         { 
-          groupName: 'PARKINGCLOUD',
-          groupLevel: '001',
+          groupName: '서울',
           groupKey: '0',
         },
         { 
-          groupName: '대표이사',
-              groupLevel: '002',
+          groupName: '구로구',
           groupKey: '0-0',
         },
         { 
-          groupName: '영업본부', groupLevel: '003',
+          groupName: '개봉1동',
           groupKey: '0-0-0',
         },
         { 
-          groupName: '지원본부', groupLevel: '003',
+          groupName: '개봉2동',
           groupKey: '0-0-1',
         },
         { 
-          groupName: '부사장', groupLevel: '002',
-          groupKey: '0-1',
+          groupName: '개봉3동',
+          groupKey: '0-0-2',
         },
-        { groupName: '기타', groupLevel: '002', groupKey: '0-2' },
-      ],
-
-      tableData: [
-        {
-          groupName: 'PARKINGCLOUD',
-          groupLevel: '001',
-          children: [
-            {
-              groupName: '대표이사',
-              groupLevel: '002',
-              children: [
-                { groupName: '영업본부', groupLevel: '003', children: [] },
-                { groupName: '지원본부', groupLevel: '003', children: [] },
-                {
-                  groupName: 'iParking Factory',
-                  groupLevel: '003',
-                  children: [],
-                },
-                { groupName: 'CORE TECH', groupLevel: '003', children: [] },
-                { groupName: '기술본부', groupLevel: '003', children: [] },
-                { groupName: '운영사업그룹', groupLevel: '003', children: [] },
-                {
-                  groupName: '컴플라이언스그룹',
-                  groupLevel: '003',
-                  children: [],
-                },
-                { groupName: 'HR본부', groupLevel: '003', children: [] },
-              ],
-            },
-            { groupName: '부사장', groupLevel: '002', children: [] },
-            { groupName: '기타', groupLevel: '002', children: [] },
-          ],
+        { 
+          groupName: '양천구',
+          groupKey: '0-1',
         },
       ],
     };
